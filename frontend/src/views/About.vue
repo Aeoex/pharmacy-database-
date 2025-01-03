@@ -11,6 +11,7 @@ export default{
       text:[],
       basket:[],
       quantity:0,
+      selectedQuantity:0,
     }
   },
   async created(){
@@ -21,7 +22,10 @@ export default{
         // console.log(data);
         console.log(response.data);
         if (response.status === 200) {
-          this.text = response.data
+          this.text = response.data.map((drug) => ({
+          ...drug,
+          selectedQuantity: 1, // Default quantity
+        }));
           console.log(this.text);
           
         }        
@@ -30,10 +34,10 @@ export default{
     async buy(x){
       console.log(x);
       
-      if (x.quantity > 0) {
+      if (x.selectedQuantity <= x.quantity) {
         const existingItem = this.basket.find((z) => z.name === x.name);
         if (existingItem) {
-          existingItem.quantity += x.quantity;
+          existingItem.selectedQuantity += x.selectedQuantity;
           console.log(this.basket);
         } else {
           this.basket.push({ ...x });
@@ -42,7 +46,7 @@ export default{
       }
       
       try {
-        const url = `http://127.0.0.1:8000/api/cart/add/${x.id}/${1}/${x.quantity}/`;
+        const url = `http://127.0.0.1:8000/api/cart/add/${x.id}/${1}/${x.selectedQuantity}/`;
         
         const response = await axios.get(url);
         
@@ -124,7 +128,7 @@ export default{
             <tbody v-for="z in basket">
               <tr>
                 <td class="text-center">{{z.name}}</td>
-                <td class="text-center">{{ z.quantity }}</td>
+                <td class="text-center">{{ z.selectedQuantity }}</td>
                 <td></td>
                 <td></td>
               </tr>
@@ -145,9 +149,14 @@ export default{
                 <h5 class="card-title">{{ x.name }}</h5>
                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                 <div class="d-flex justify-content-around">  
-                  <input type="number" class="form-control w-25" v-model.number="x.quantity">
-                  <button type="submit" v-on:click="buy(x)" class="btn btn-primary" v-if="x.quantity>0">add to basket</button>
-                  <h3 class="text-end text-danger" v-else>sold out</h3>
+                  <input type="number" class="form-control w-25" v-model.number="x.selectedQuantity" :min="1" :max="x.quantity" :disabled="x.quantity === 0" >  
+                    <!-- Button to add to basket -->
+                    <button type="submit" v-on:click="buy(x)" class="btn btn-primary" v-if="x.quantity > 0"> Add to Basket
+                    </button>
+                    <!-- Sold out message -->
+                    <h3 class="text-end text-danger" v-else>
+                      Sold Out
+                    </h3>
                 </div>
               </div>
             </div>

@@ -22,6 +22,10 @@ export default{
           
         }
       } catch (error) {
+        if(error){
+          console.log(error);
+          alert(error.response.data.error)
+        }
         if (error.response && error.response.status === 401) {
           this.errorMessage = 'Invalid username or password.';
         } else {

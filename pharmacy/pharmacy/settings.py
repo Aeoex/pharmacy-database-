@@ -96,7 +96,7 @@ DATABASES = {
         'NAME': 'pharmacy',
         'USER': 'admin',
         'PASSWORD': '4862159',
-        'HOST': 'db-server',  # Use the IP address or hostname of your DB server #change this to 'db-server' for docker and ourside docker change it to 'localhost'
+        'HOST': 'localhost',  # Use the IP address or hostname of your DB server #change this to 'db-server' for docker and ourside docker change it to 'localhost'
         'PORT': '5432',       # Default PostgreSQL port
     }
 }
